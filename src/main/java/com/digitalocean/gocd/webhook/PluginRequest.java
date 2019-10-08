@@ -1,48 +1,37 @@
-/*
- * Copyright 2019 DigitalOcean LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.digitalocean.gocd.webhook;
 
-import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
-import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
-import com.thoughtworks.go.plugin.api.response.GoApiResponse;
-
-import static com.digitalocean.gocd.webhook.Constants.PLUGIN_IDENTIFIER;
-import static com.digitalocean.gocd.webhook.Constants.PLUGIN_SETTINGS_PROCESSOR_API_VERSION;
-
-
 /**
- * Instances of this class know how to send messages to the GoCD Server.
+ * Enumerable that represents one of the messages that the server sends to the plugin
  */
-public class PluginRequest {
-    private final GoApplicationAccessor accessor;
+public enum PluginRequest {
+    // elastic agent related requests that the server makes to the plugin
+    REQUEST_NOTIFICATIONS_INTERESTED_IN("notifications-interested-in"),
+    REQUEST_STAGE_STATUS("stage-status"),
+    REQUEST_AGENT_STATUS("agent-status"),
 
-    public PluginRequest(GoApplicationAccessor accessor) {
-        this.accessor = accessor;
+    // settings related requests that the server makes to the plugin
+    PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),
+    PLUGIN_SETTINGS_GET_VIEW(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-view"),
+    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration");
+
+    private final String requestName;
+
+    PluginRequest(String requestName) {
+        this.requestName = requestName;
     }
 
-    public PluginSettings getPluginSettings() throws ServerRequestFailedException {
-        DefaultGoApiRequest request = new DefaultGoApiRequest(Constants.REQUEST_SERVER_GET_PLUGIN_SETTINGS, PLUGIN_SETTINGS_PROCESSOR_API_VERSION, PLUGIN_IDENTIFIER);
-        GoApiResponse response = accessor.submit(request);
+    public String requestName() {
+        return requestName;
+    }
 
-        if (response.responseCode() != 200) {
-            throw ServerRequestFailedException.getPluginSettings(response);
+    public static PluginRequest fromString(String requestName) {
+        if (requestName != null) {
+            for (PluginRequest request : PluginRequest.values()) {
+                if (requestName.equalsIgnoreCase(request.requestName)) {
+                    return request;
+                }
+            }
         }
-
-        return PluginSettings.fromJSON(response.responseBody());
+        return null;
     }
-
 }

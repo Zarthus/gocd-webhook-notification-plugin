@@ -1,44 +1,25 @@
-/*
- * Copyright 2019 DigitalOcean LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.digitalocean.gocd.webhook.executors;
 
 import com.digitalocean.gocd.webhook.RequestExecutor;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import static com.digitalocean.gocd.webhook.Request.REQUEST_AGENT_STATUS;
-import static com.digitalocean.gocd.webhook.Request.REQUEST_STAGE_STATUS;
+import static com.digitalocean.gocd.webhook.PluginRequest.REQUEST_AGENT_STATUS;
+import static com.digitalocean.gocd.webhook.PluginRequest.REQUEST_STAGE_STATUS;
 
 public class NotificationInterestedInExecutor implements RequestExecutor {
-    private static final Gson GSON = new Gson();
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
-        JsonObject jsonObject = new JsonObject();
-        JsonArray notifications = new JsonArray();
-        notifications.add(REQUEST_STAGE_STATUS.requestName());
-        notifications.add(REQUEST_AGENT_STATUS.requestName());
-        jsonObject.add("notifications", notifications);
+    public GoPluginApiResponse execute() {
+        JSONArray notifications = new JSONArray();
+        notifications.put(REQUEST_STAGE_STATUS.requestName());
+        notifications.put(REQUEST_AGENT_STATUS.requestName());
 
-        DefaultGoPluginApiResponse defaultGoPluginApiResponse = new DefaultGoPluginApiResponse(200);
-        defaultGoPluginApiResponse.setResponseBody(GSON.toJson(jsonObject));
-        return defaultGoPluginApiResponse;
+        JSONObject obj = new JSONObject();
+        obj.put("notifications", notifications);
+
+        return new DefaultGoPluginApiResponse(200, obj.toString());
     }
 }
