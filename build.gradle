@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group = 'com.digitalocean.gocd'
-version = '1.0'
+version = '1.0.1'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
