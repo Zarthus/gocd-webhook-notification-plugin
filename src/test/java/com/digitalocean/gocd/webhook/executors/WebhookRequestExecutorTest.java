@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class WebhookRequestExecutorTest {
 
@@ -36,7 +36,7 @@ public class WebhookRequestExecutorTest {
         HttpClient client = mock(HttpClient.class);
         List<String> endpoints = Arrays.asList("http://example.com/alpha", "http://example.com/beta");
 
-        doThrow(new Exception("oops")).when(client).postToEndpoint("http://example.com/alpha", "wibble");
+        when(client.postToEndpoint("http://example.com/alpha", "wibble")).thenThrow(new Exception("oops"));
 
         WebhookRequestExecutor executor = new WebhookRequestExecutor(endpoints, "wibble", client);
         GoPluginApiResponse response = executor.execute();
