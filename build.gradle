@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group = 'com.digitalocean.gocd'
-version = '1.0.1'
+version = '1.1'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
@@ -10,7 +10,7 @@ project.ext.pluginDesc = [
         goCdVersion: '16.2.1',
         name       : 'Webhook notification plugin',
         description: 'Webhook notification plugin',
-        vendorName : 'DigitalOcean LLC',
+        vendorName : 'DigitalOcean',
         vendorUrl  : 'https://github.com/digitalocean/gocd-webhook-notification-plugin'
 ]
 
