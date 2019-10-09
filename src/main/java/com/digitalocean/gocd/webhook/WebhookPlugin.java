@@ -46,9 +46,9 @@ public class WebhookPlugin implements GoPlugin {
             case REQUEST_NOTIFICATIONS_INTERESTED_IN:
                 return new NotificationInterestedInExecutor();
             case REQUEST_STAGE_STATUS:
-                return new WebhookRequestExecutor(Configuration.getCurrent().stageStatusEndpoints(), request.requestBody());
+                return getStageStatusWebhook(request);
             case REQUEST_AGENT_STATUS:
-                return new WebhookRequestExecutor(Configuration.getCurrent().agentStatusEndpoints(), request.requestBody());
+                return getAgentStatusWebhook(request);
             case PLUGIN_SETTINGS_GET_CONFIGURATION:
                 return new GetPluginConfigurationExecutor();
             case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
@@ -56,5 +56,15 @@ public class WebhookPlugin implements GoPlugin {
             default:
                 throw new UnhandledRequestTypeException(request.requestName());
         }
+    }
+
+    private RequestExecutor getStageStatusWebhook(GoPluginApiRequest request) throws Exception {
+        Configuration config = Configuration.getCurrent();
+        return new WebhookRequestExecutor(config.getClient(), config.getStageEndpoints(), request.requestBody());
+    }
+
+    private RequestExecutor getAgentStatusWebhook(GoPluginApiRequest request) throws Exception {
+        Configuration config = Configuration.getCurrent();
+        return new WebhookRequestExecutor(config.getClient(), config.getAgentEndpoints(), request.requestBody());
     }
 }

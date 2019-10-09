@@ -15,11 +15,7 @@ public class WebhookRequestExecutor implements RequestExecutor {
     private final String requestBody;
     private final HttpClient sender;
 
-    public WebhookRequestExecutor(List<String> endpoints, String requestBody) {
-        this(endpoints, requestBody, new HttpClient());
-    }
-
-    public WebhookRequestExecutor(List<String> endpoints, String requestBody, HttpClient sender) {
+    public WebhookRequestExecutor(HttpClient sender, List<String> endpoints, String requestBody) {
         this.endpoints = endpoints;
         this.requestBody = requestBody;
         this.sender = sender;

@@ -21,7 +21,7 @@ public class WebhookRequestExecutorTest {
         HttpClient client = mock(HttpClient.class);
         List<String> endpoints = Arrays.asList("http://example.com/alpha", "http://example.com/beta");
 
-        WebhookRequestExecutor executor = new WebhookRequestExecutor(endpoints, "wibble", client);
+        WebhookRequestExecutor executor = new WebhookRequestExecutor(client, endpoints, "wibble");
         GoPluginApiResponse response = executor.execute();
 
         verify(client).postToEndpoint("http://example.com/alpha", "wibble");
@@ -38,7 +38,7 @@ public class WebhookRequestExecutorTest {
 
         when(client.postToEndpoint("http://example.com/alpha", "wibble")).thenThrow(new Exception("oops"));
 
-        WebhookRequestExecutor executor = new WebhookRequestExecutor(endpoints, "wibble", client);
+        WebhookRequestExecutor executor = new WebhookRequestExecutor(client, endpoints, "wibble");
         GoPluginApiResponse response = executor.execute();
 
         verify(client).postToEndpoint("http://example.com/beta", "wibble");

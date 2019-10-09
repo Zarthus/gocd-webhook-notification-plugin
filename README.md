@@ -22,6 +22,11 @@ stage.status.endpoint.2=http://example.com/stage/beta
 
 agent.status.endpoint.1=http://example.com/agent/alpha
 agent.status.endpoint.2=http://example.com/agent/beta
+
+# This is useful in environments where the endpoints can be completely trusted.
+# It is a terrible idea to use this to connect to public HTTPS endpoints.
+# Set this to true at your own risk.
+trust.all.https=false
 ```
 
 You don't need to configure any agent or stage webhooks/endpoints, but a configuration file must be present.

@@ -1,5 +1,6 @@
 package com.digitalocean.gocd.webhook;
 
+import com.digitalocean.gocd.webhook.tls.TrustAllHttpsEndpoints;
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -10,9 +11,23 @@ import java.nio.charset.StandardCharsets;
 
 public class HttpClient {
 
+    private final boolean trustAllHttps;
+
+    // for subclassing in tests
+    public HttpClient() {
+        this(false);
+    }
+
+    public HttpClient(boolean trustAllHttps) {
+        this.trustAllHttps = trustAllHttps;
+    }
+
     public String postToEndpoint(String endpoint, String requestBody) throws Exception {
         URL url = new URL(endpoint);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        if (endpoint.startsWith("https://") && trustAllHttps) {
+            TrustAllHttpsEndpoints.configure(conn);
+        }
         try {
             conn.setDoOutput(true);
             conn.setDoInput(true);

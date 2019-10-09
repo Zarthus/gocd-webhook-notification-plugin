@@ -17,11 +17,11 @@ public class ConfigurationTest {
         File configFilePath = new File(SystemUtils.getUserDir(), "src/test/resources/test_webhook_notify.properties");
         Configuration configuration = Configuration.loadConfiguration(configFilePath);
 
-        List<String> endpoints = configuration.stageStatusEndpoints();
+        List<String> endpoints = configuration.getStageEndpoints();
         assertThat(endpoints.size(), is(2));
         assertThat(endpoints, containsInAnyOrder("http://example.com/stage/alpha", "http://example.com/stage/beta"));
 
-        endpoints = configuration.agentStatusEndpoints();
+        endpoints = configuration.getAgentEndpoints();
         assertThat(endpoints.size(), is(2));
         assertThat(endpoints, containsInAnyOrder("http://example.com/agent/alpha", "http://example.com/agent/beta"));
     }

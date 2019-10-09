@@ -1,6 +1,7 @@
 package com.digitalocean.gocd.webhook;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -57,8 +58,13 @@ class Configuration {
         try (FileInputStream input = new FileInputStream(pluginConfig)) {
             props.load(input);
         }
+
+        boolean trustAllHttps = BooleanUtils.toBoolean(props.getProperty("trust.all.https", "false"));
+        HttpClient client = new HttpClient(trustAllHttps);
+
         List<String> stageEndpoints = new ArrayList<>();
         List<String> agentEndpoints = new ArrayList<>();
+
         Enumeration<?> names = props.propertyNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
@@ -68,7 +74,7 @@ class Configuration {
                 agentEndpoints.add(props.getProperty(name));
             }
         }
-        return new Configuration(unmodifiableList(stageEndpoints), unmodifiableList(agentEndpoints));
+        return new Configuration(client, stageEndpoints, agentEndpoints);
     }
 
     private static final Lock lock = new ReentrantLock(true);
@@ -93,19 +99,25 @@ class Configuration {
         }
     }
 
+    private final HttpClient client;
     private final List<String> stageEndpoints;
     private final List<String> agentEndpoints;
 
-    private Configuration(List<String> stageEndpoints, List<String> agentEndpoints) {
-        this.stageEndpoints = stageEndpoints;
-        this.agentEndpoints = agentEndpoints;
+    private Configuration(HttpClient client, List<String> stageEndpoints, List<String> agentEndpoints) {
+        this.stageEndpoints = unmodifiableList(stageEndpoints);
+        this.agentEndpoints = unmodifiableList(agentEndpoints);
+        this.client = client;
     }
 
-    List<String> stageStatusEndpoints() {
+    HttpClient getClient() {
+        return client;
+    }
+
+    List<String> getStageEndpoints() {
         return stageEndpoints;
     }
 
-    List<String> agentStatusEndpoints() {
+    List<String> getAgentEndpoints() {
         return agentEndpoints;
     }
 }
