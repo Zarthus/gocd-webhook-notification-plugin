@@ -16,6 +16,9 @@ public class HttpClient {
         try {
             conn.setDoOutput(true);
             conn.setDoInput(true);
+            // 30 sec timeout for connect & read
+            conn.setConnectTimeout(30 * 1000);
+            conn.setReadTimeout(30 * 1000);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
