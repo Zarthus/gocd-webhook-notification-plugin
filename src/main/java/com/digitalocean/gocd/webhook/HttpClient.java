@@ -25,10 +25,10 @@ public class HttpClient {
     public String postToEndpoint(String endpoint, String requestBody) throws Exception {
         URL url = new URL(endpoint);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        if (endpoint.startsWith("https://") && trustAllHttps) {
-            TrustAllHttpsEndpoints.configure(conn);
-        }
         try {
+            if (endpoint.startsWith("https://") && trustAllHttps) {
+                TrustAllHttpsEndpoints.configure(conn);
+            }
             conn.setDoOutput(true);
             conn.setDoInput(true);
             // 30 sec timeout for connect & read
