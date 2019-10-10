@@ -4,6 +4,10 @@
 
 This is a plugin based on the [notifications-skeleton](https://github.com/gocd-contrib/notification-skeleton-plugin) to notify remote webhooks of changes to [build stages](https://plugin-api.gocd.org/19.8.0/notifications/#stage-status-changed) and [build agents](https://plugin-api.gocd.org/19.8.0/notifications/#agent-status-changed). Each webhook will receive the change notification as a HTTP/JSON POST message.
 
+## Download
+
+You can download the latest release of this plugin from [here](https://github.com/digitalocean/gocd-webhook-notification-plugin/releases).
+
 ## Configuration
 
 The configuration for this plugin is expected to be in [Java Properties](https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html) format.
