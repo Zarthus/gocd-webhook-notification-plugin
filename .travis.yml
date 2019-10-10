@@ -1,8 +1,17 @@
 language: java
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+deploy:
+  provider: releases
+  api_key:
+    secure: Vf97qHqElGlieyvZvWYCmiJT6x/JjWnOb9PWAGCyfyxK1PRWp/ntmXeE+i4OqPOLMR+gfTY9xp0IhEObaFKnff9naNryHTu0ST3tySUTf1IuzXBsQ5KY8h0c916w+N7KUHzOn8P/x5cH29YzE1QxwPc6hVabQGR2ByluHK8IJdZ0ZusDJ7e8WVCKdd9f5OhsP7UmM5IW6G2nsd2lAtwUU6bOP9yExPQyeeVRjF/mQojRW0YzYbubMtetQt9S7G8NLXANh32s4Cj4KkL406MsZe+EOadVAPkU8KOhWP7qncEtoIwJBYkO16IP6M6rgPcpACkhsm4jO6im+/L1aCBA8w0A1Exp6+0UwZ1ROWBXO/7x1asoYKCmUz/qGlNfjGs90fwAsbvF3D7xSwb3pe0AQ6AC9Zv14rInG6lhYzGWnbVw5LKAeuiQxm26xnFHsrAr7VTv6QZhiVeydVqZ7e+lxZ9eIDSyfkO6EVtlIGb6FmUNau4Ryw10YYdJdfhqc0tOzpNDMF079/4/CXh7I5kIy5hqXfxQcvEHn21wfWlZqRB21uOl+y9+AnFEznJVXcSsRaV4vGdJxBjd18zyV3JKt7Mk/dQQyn7jdhnQNy5WMn8OPJYeYZdBdY+5zkBkKm9fonjYl6L9DaFcObgbsfxeKcUXUVW2LOCLZ1AeYlnu2zo=
+  file_glob: true
+  file: build/libs/*
+  skip_cleanup: true
+  on:
+    tags: true
