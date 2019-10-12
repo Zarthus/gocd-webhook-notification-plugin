@@ -35,7 +35,7 @@ agent.status.endpoint.2=http://example.com/agent/beta
 trust.all.https=false
 ```
 
-You don't need to configure any agent or stage webhooks/endpoints, but a configuration file must be present.
+You don't need to configure any agent or stage webhooks/endpoints, but a configuration file must be present. Please note that you do not need to restart the GoCD server when you update this file, it will be reloaded automatically for the next notification.
 
 ## Building the code base
 
