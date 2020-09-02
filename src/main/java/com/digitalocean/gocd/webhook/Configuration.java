@@ -18,7 +18,7 @@ import static java.util.Collections.unmodifiableList;
 
 class Configuration {
 
-    private static Logger LOGGER = Logger.getLoggerFor(Configuration.class);
+    private static final Logger LOGGER = Logger.getLoggerFor(Configuration.class);
 
     private static final String CRUISE_SERVER_DIR = "CRUISE_SERVER_DIR";
     private static final String WEBHOOK_NOTIFY_CONFIG = "WEBHOOK_NOTIFY_CONFIG";
@@ -77,26 +77,20 @@ class Configuration {
         return new Configuration(client, stageEndpoints, agentEndpoints);
     }
 
-    private static final Lock lock = new ReentrantLock(true);
     private static Configuration current;
     private static long lastModified;
     private static File configFile;
 
-    static Configuration getCurrent() throws Exception {
-        lock.lock();
-        try {
-            if (current != null && lastModified == configFile.lastModified()) {
-                return current;
-            }
-            if (configFile == null) {
-                configFile = findConfigFile();
-            }
-            lastModified = configFile.lastModified();
-            current = loadConfiguration(configFile);
+    synchronized static Configuration getCurrent() throws Exception {
+        if (current != null && lastModified == configFile.lastModified()) {
             return current;
-        } finally {
-            lock.unlock();
         }
+        if (configFile == null) {
+            configFile = findConfigFile();
+        }
+        lastModified = configFile.lastModified();
+        current = loadConfiguration(configFile);
+        return current;
     }
 
     private final HttpClient client;
