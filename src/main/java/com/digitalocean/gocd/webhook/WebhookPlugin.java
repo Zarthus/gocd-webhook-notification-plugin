@@ -12,11 +12,33 @@ import com.thoughtworks.go.plugin.api.annotation.Extension;
 import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.thoughtworks.go.plugin.api.logging.Logger;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.digitalocean.gocd.webhook.Constants.PLUGIN_IDENTIFIER;
 
 @Extension
 public class WebhookPlugin implements GoPlugin {
+
+    private static final Logger LOGGER = Logger.getLoggerFor(WebhookPlugin.class);
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private final Timer timer = new Timer();
+
+    public WebhookPlugin() {
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    Configuration.refresh();
+                } catch (Exception e) {
+                    LOGGER.error("Failed to refresh configuration", e);
+                }
+            }
+        }, 0, 10000); // refresh now, and every 10 seconds thereafter
+    }
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor accessor) {
@@ -58,13 +80,13 @@ public class WebhookPlugin implements GoPlugin {
         }
     }
 
-    private RequestExecutor getStageStatusWebhook(GoPluginApiRequest request) throws Exception {
-        Configuration config = Configuration.getCurrent();
+    private RequestExecutor getStageStatusWebhook(GoPluginApiRequest request) {
+        Configuration config = Configuration.current();
         return new WebhookRequestExecutor(config.getClient(), config.getStageEndpoints(), request.requestBody());
     }
 
-    private RequestExecutor getAgentStatusWebhook(GoPluginApiRequest request) throws Exception {
-        Configuration config = Configuration.getCurrent();
+    private RequestExecutor getAgentStatusWebhook(GoPluginApiRequest request) {
+        Configuration config = Configuration.current();
         return new WebhookRequestExecutor(config.getClient(), config.getAgentEndpoints(), request.requestBody());
     }
 }

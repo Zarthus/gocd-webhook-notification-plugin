@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 class Configuration {
@@ -21,6 +23,29 @@ class Configuration {
     private static final String CRUISE_SERVER_DIR = "CRUISE_SERVER_DIR";
     private static final String WEBHOOK_NOTIFY_CONFIG = "WEBHOOK_NOTIFY_CONFIG";
     private static final String CONFIG_FILE_NAME = "webhook_notify.properties";
+
+    // lock-free access to immutable instance read & updated by different threads
+    private static final AtomicReference<Configuration> CURRENT = new AtomicReference<>(new Configuration());
+
+    // refresh variables
+    private static File configFile;
+    private static long lastModified;
+
+    public static Configuration current() {
+        return CURRENT.get();
+    }
+
+    public static void refresh() throws Exception {
+        if (configFile == null) {
+            configFile = findConfigFile();
+            lastModified = 0;
+        }
+        if (lastModified != configFile.lastModified()) {
+            Configuration config = loadConfiguration(configFile);
+            lastModified = configFile.lastModified();
+            CURRENT.set(config);
+        }
+    }
 
     /*
      * Adapted from https://github.com/ashwanthkumar/gocd-slack-build-notifier/blob/master/src/main/java/in/ashwanthkumar/gocd/slack/GoNotificationPlugin.java#L179
@@ -51,6 +76,7 @@ class Configuration {
         throw new RuntimeException("Unable to find webhook_notify.properties. Please make sure you've set it up right.");
     }
 
+    // exposed for unit test
     static Configuration loadConfiguration(File pluginConfig) throws Exception {
         Properties props = new Properties();
         try (FileInputStream input = new FileInputStream(pluginConfig)) {
@@ -75,25 +101,15 @@ class Configuration {
         return new Configuration(client, stageEndpoints, agentEndpoints);
     }
 
-    private static Configuration current;
-    private static long lastModified;
-    private static File configFile;
-
-    synchronized static Configuration getCurrent() throws Exception {
-        if (current != null && lastModified == configFile.lastModified()) {
-            return current;
-        }
-        if (configFile == null) {
-            configFile = findConfigFile();
-        }
-        lastModified = configFile.lastModified();
-        current = loadConfiguration(configFile);
-        return current;
-    }
-
     private final HttpClient client;
     private final List<String> stageEndpoints;
     private final List<String> agentEndpoints;
+
+    private Configuration() {
+        this.stageEndpoints = emptyList();
+        this.agentEndpoints = emptyList();
+        this.client = new HttpClient();
+    }
 
     private Configuration(HttpClient client, List<String> stageEndpoints, List<String> agentEndpoints) {
         this.stageEndpoints = unmodifiableList(stageEndpoints);
