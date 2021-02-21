@@ -96,6 +96,8 @@ class Configuration {
                 agentEndpoints.add(props.getProperty(name));
             }
         }
+
+        LOGGER.info(String.format("Loaded webhook configuration from %s", pluginConfig.getAbsolutePath()));
         return new Configuration(client, stageEndpoints, agentEndpoints);
     }
 
