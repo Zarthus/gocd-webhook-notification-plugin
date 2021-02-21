@@ -24,10 +24,8 @@ class Configuration {
     private static final String WEBHOOK_NOTIFY_CONFIG = "WEBHOOK_NOTIFY_CONFIG";
     private static final String CONFIG_FILE_NAME = "webhook_notify.properties";
 
-    // lock-free access to immutable instance read & updated by different threads
     private static final AtomicReference<Configuration> CURRENT = new AtomicReference<>(new Configuration());
 
-    // refresh variables
     private static File configFile;
     private static long lastModified;
 
@@ -35,7 +33,7 @@ class Configuration {
         return CURRENT.get();
     }
 
-    public static void refresh() throws Exception {
+    public static synchronized void refresh() throws Exception {
         if (configFile == null) {
             configFile = findConfigFile();
             lastModified = 0;
