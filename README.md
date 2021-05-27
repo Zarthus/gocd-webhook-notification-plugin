@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/digitalocean/gocd-webhook-notification-plugin.svg?branch=master)](https://travis-ci.org/digitalocean/gocd-webhook-notification-plugin)
-
 # Webhook notification plugin for GoCD
 
 This is a plugin based on the [notifications-skeleton](https://github.com/gocd-contrib/notification-skeleton-plugin) to notify remote webhooks of changes to [build stages](https://plugin-api.gocd.org/19.8.0/notifications/#stage-status-changed) and [build agents](https://plugin-api.gocd.org/19.8.0/notifications/#agent-status-changed). Each webhook will receive the change notification as a HTTP/JSON POST message.
@@ -39,4 +37,4 @@ You don't need to configure any agent or stage webhooks/endpoints, or provide an
 
 ## Building the code base
 
-To build the jar, run `./gradlew clean test assemble`
+To build the jar run `make build`.
