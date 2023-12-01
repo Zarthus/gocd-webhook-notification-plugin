@@ -1,3 +1,7 @@
+# Archived
+
+This project is no longer maintained and is currently set to an archived state. Please consider using the upstream instead.
+
 # Webhook notification plugin for GoCD
 
 This is a plugin based on the [notifications-skeleton](https://github.com/gocd-contrib/notification-skeleton-plugin) to notify remote webhooks of changes to [build stages](https://plugin-api.gocd.org/19.8.0/notifications/#stage-status-changed) and [build agents](https://plugin-api.gocd.org/19.8.0/notifications/#agent-status-changed). Each webhook will receive the change notification as a HTTP/JSON POST message.
